@@ -6,28 +6,29 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from konlpy.tag import Okt
 
-
-
-st.set_page_config(page_title="AI 영화 비평가", layout="centered")
+st.set_page_config(page_title="AI 영화 비평가", layout="centered")  # html의 title 태그 같은 역할
 
 ## 2. 모델 및 토크나이저 로드 함수 ##
-@st.cache_resource
+@st.cache_resource   # 모델을 메모리에 고정하여 버튼을 누를 때마다 새로 읽지 않도록 속도를 최적화합니다.
 def load_resources():
-    # 저장된 모델과 피클 파일을 불러옵니다.
+    # 학습이 완료된 딥러닝 모델 파일(.h5)을 불러옵니다.
     model = load_model('best_model.h5')
+    # 단어를 숫자로 변환해주는 사전 파일(pickle)을 불러옵니다.
     with open('tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
     return model, tokenizer
 
+# 함수를 실행하여 모델과 토크나이저를 변수에 저장합니다.
 model, tokenizer = load_resources()
+# 한국어 형태소 분석기(가위 역할)를 준비합니다.
 okt = Okt()
+# 분석 시 제외할 의미 없는 단어(불용어) 명단을 정의합니다.
 stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다','영화','최고','정말','진짜']
 
 # 화면 상단
 # <> 페이지 제목
 st.title("🎬 AI 영화 리뷰 감성 분석기")
 st.info("궁금한 영화의 리뷰를 아래에 입력해보세요.")
-
 
 # 화면 사이드 바
 # <> 정확도 표시
@@ -47,19 +48,26 @@ review_text = st.text_area("2. 영화 리뷰 내용을 입력하세요", placeho
 # <> 분석 버튼
 if st.button("분석 시작"):
     if review_text:
-# 실시간 전처리
+        # 실시간 전처리
+        # 문장을 단어 단위로 쪼개고, '재밌어요'를 '재밌다'처럼 기본형으로 변환합니다.
         new_sentence = okt.morphs(review_text, stem=True)
+        
+        # 의미 없는 단어(은, 는, 이, 가 등)를 제거하여 핵심 단어만 남깁니다.
         new_sentence = [word for word in new_sentence if not word in stopwords]
+        
+        # 단어들을 미리 정해진 숫자 번호로 바꿉니다. (예: '최고' -> 15번)
         encoded = tokenizer.texts_to_sequences([new_sentence])
+        
+        # 모든 입력 길이를 80자로 맞춥니다. (짧으면 0을 채움)
         pad_new = pad_sequences(encoded, maxlen=80) 
         
         # 예측
+        # 학습된 모델이 데이터를 읽고 0(부정) ~ 1(긍정) 사이의 확률 점수를 내놓습니다.
         score = float(model.predict(pad_new))
         
         st.divider() 
         # <> 결과
         # <> 영화 리뷰 긍정인지 부정인지        
-        
         if score > 0.5:
             st.subheader(f"✅ '{movie_title}' 리뷰 분석 결과: [긍정]")
             st.write(f"인공지능이 판단한 긍정 확률은 **{score*100:.2f}%**입니다.")
