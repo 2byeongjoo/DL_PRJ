@@ -5,6 +5,7 @@ import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from konlpy.tag import Okt
+from utils import preprocess_review
 
 st.set_page_config(page_title="AI 영화 비평가", layout="centered")  # html의 title 태그 같은 역할
 
@@ -17,6 +18,7 @@ def load_resources():
     with open('tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
     return model, tokenizer
+
 
 # 함수를 실행하여 모델과 토크나이저를 변수에 저장합니다.
 model, tokenizer = load_resources()
@@ -48,6 +50,7 @@ review_text = st.text_area("2. 영화 리뷰 내용을 입력하세요", placeho
 # <> 분석 버튼
 if st.button("분석 시작"):
     if review_text:
+        '''
         # 실시간 전처리
         # 문장을 단어 단위로 쪼개고, '재밌어요'를 '재밌다'처럼 기본형으로 변환합니다.
         new_sentence = okt.morphs(review_text, stem=True)
@@ -58,8 +61,10 @@ if st.button("분석 시작"):
         # 단어들을 미리 정해진 숫자 번호로 바꿉니다. (예: '최고' -> 15번)
         encoded = tokenizer.texts_to_sequences([new_sentence])
         
-        # 모든 입력 길이를 80자로 맞춥니다. (짧으면 0을 채움)
-        pad_new = pad_sequences(encoded, maxlen=80) 
+        # 모든 입력 길이를 30자로 맞춥니다. (짧으면 0을 채움)
+        pad_new = pad_sequences(encoded, maxlen=30) 
+        '''
+        pad_new = preprocess_review(review_text, tokenizer)
         
         # 예측
         # 학습된 모델이 데이터를 읽고 0(부정) ~ 1(긍정) 사이의 확률 점수를 내놓습니다.
