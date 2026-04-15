@@ -34,7 +34,6 @@ def preprocess_review(new_sentence, tokenizer):
     return pad_new
 
 '''
-
 # 훈련 데이터 토큰화 (리스트 형식으로 저장)
 X_train = []
 for sentence in train_data['document']:
@@ -72,14 +71,18 @@ print(X_train[:3])
 
 # 1. 모든 리뷰의 길이를 동일하게 맞춤 (가장 긴 리뷰 기준 또는 일정 길이)
 # 여기서는 가장 긴 리뷰의 길이를 확인하거나 보통 30~50 정도로 잡습니다.
-''''''
-pad_sequence(변수명, maxlen=길이지정)
-ex) maxlen 30가정
-In [12, 5]              길이 : 2
-Out [0, 0, ... , 1, 5]  길이 : 30'''
 '''
 
 
+'''
+pad_sequence(변수명, maxlen=길이지정)
+ex) maxlen 30가정
+In [12, 5]              길이 : 2
+Out [0, 0, ... , 1, 5]  길이 : 30
+'''
+
+
+'''
 X_train = pad_sequences(X_train, maxlen=max_len)
 X_test = pad_sequences(X_test, maxlen=max_len)
 
@@ -91,4 +94,5 @@ print(f"pad_sequence 반영 후, 훈련데이터 0번째 인덱스 값 추출\n{
 y_train = np.array(train_data['label']) # 훈련 데이터의 label 컬럼을 y_훈련 데이터로 둚.
 
 # 테스트 데이터의 정답 추출
-y_test = np.array(test_data['label']) # 테스트 데이터의 label 컬럼을 y_테스트 데이터로 둚.'''
+y_test = np.array(test_data['label']) # 테스트 데이터의 label 컬럼을 y_테스트 데이터로 둚.
+'''
