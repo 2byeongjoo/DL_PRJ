@@ -38,7 +38,7 @@ def load_resources():
 
 
 # 함수를 실행하여 모델과 토크나이저를 변수에 저장합니다.
-model, tokenizer = load_resources()
+model, tokenizer, llm = load_resources()
 # 한국어 형태소 분석기(가위 역할)를 준비합니다.
 okt = Okt()
 # 분석 시 제외할 의미 없는 단어(불용어) 명단을 정의합니다.
