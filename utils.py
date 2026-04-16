@@ -1,38 +1,3 @@
-import numpy as np
-# 토큰화(Tokenization) 및 불용어 제거(Stopwords Removal)
-from konlpy.tag import Okt
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-
-
-# 1. 형태소 분석기 객체 생성
-okt = Okt()
-
-# 2. 불용어 리스트 정의 (감성 분석에 도움이 안 되는 단어들)
-# 분석을 해보면서 나중에 여기에 단어를 추가하면 정확도가 올라갑니다!
-stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다','영화','최고','정말','진짜']
-max_len = 30  # 최대 길이 30
-# 3. 테스트 (한 번 쪼개볼까요?)
-print(okt.morphs("이 영화 진짜 재밌는데 왜 다들 욕하지?", stem=True))
-
-# --- [함수부] 실시간 서비스용 변환 함수 ---
-def preprocess_review(new_sentence, tokenizer):
-    """
-    사용자가 입력한 텍스트를 모델이 읽을 수 있는 숫자 배열로 변환합니다.
-    """
-    # 1. 형태소 분석 및 어간 추출
-    new_sentence = okt.morphs(new_sentence, stem=True) 
-    
-    # 2. 불용어 제거
-    new_sentence = [word for word in new_sentence if not word in stopwords] 
-    
-    # 3. 정수 인코딩 (전달받은 tokenizer 사전 활용)
-    encoded = tokenizer.texts_to_sequences([new_sentence]) 
-    
-    # 4. 패딩 (길이 맞추기)
-    pad_new = pad_sequences(encoded, maxlen=max_len) 
-    
-    return pad_new
-
 '''
 # 훈련 데이터 토큰화 (리스트 형식으로 저장)
 X_train = []
@@ -96,3 +61,39 @@ y_train = np.array(train_data['label']) # 훈련 데이터의 label 컬럼을 y_
 # 테스트 데이터의 정답 추출
 y_test = np.array(test_data['label']) # 테스트 데이터의 label 컬럼을 y_테스트 데이터로 둚.
 '''
+
+import numpy as np
+# 토큰화(Tokenization) 및 불용어 제거(Stopwords Removal)
+from konlpy.tag import Okt
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+
+# 1. 형태소 분석기 객체 생성
+okt = Okt()
+
+# 2. 불용어 리스트 정의 (감성 분석에 도움이 안 되는 단어들)
+# 분석을 해보면서 나중에 여기에 단어를 추가하면 정확도가 올라갑니다!
+stopwords = ['의','가','이','은','들','는','좀','잘','걍','과','도','를','으로','자','에','와','한','하다','영화','최고','정말','진짜']
+max_len = 30  # 최대 길이 30
+# 3. 테스트 (한 번 쪼개볼까요?)
+print(okt.morphs("이 영화 진짜 재밌는데 왜 다들 욕하지?", stem=True))
+
+# --- [함수부] 실시간 서비스용 변환 함수 ---
+def preprocess_review(new_sentence, tokenizer):
+    """
+    사용자가 입력한 텍스트를 모델이 읽을 수 있는 숫자 배열로 변환합니다.
+    """
+    # 1. 형태소 분석 및 어간 추출
+    new_sentence = okt.morphs(new_sentence, stem=True) 
+    
+    # 2. 불용어 제거
+    new_sentence = [word for word in new_sentence if not word in stopwords] 
+    
+    # 3. 정수 인코딩 (전달받은 tokenizer 사전 활용)
+    encoded = tokenizer.texts_to_sequences([new_sentence]) 
+    
+    # 4. 패딩 (길이 맞추기)
+    pad_new = pad_sequences(encoded, maxlen=max_len) 
+    
+    return pad_new
+
