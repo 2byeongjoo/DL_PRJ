@@ -1,11 +1,11 @@
 # model_llm.py
 from langchain_community.llms import Ollama
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser # 추가
 
 class ReviewLLM:
     def __init__(self):
-        # 1. Ollama 모델 설정 (설치하신 모델명에 맞게 수정 가능: llama3, mistral 등)
+        # 1. Ollama 모델 설정
         self.llm = Ollama(model="llama3") 
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
@@ -24,9 +24,12 @@ class ReviewLLM:
         비평 결과:
         """
         self.prompt = PromptTemplate(template=self.template, input_variables=["review", "score"])
-        self.chain = LLMChain(llm=self.llm, prompt=self.prompt)
+        
+        # 3. 최신 방식(Chain) 구성: | 기호를 사용해 연결합니다.
+        self.chain = self.prompt | self.llm | StrOutputParser()
 
     def analyze_review(self, review_text, sentiment_score):
         # 점수를 퍼센트로 변환해서 전달
         display_score = round(sentiment_score * 100, 2)
-        return self.chain.run(review=review_text, score=display_score)
+        # run 대신 invoke를 사용합니다 (최신 규격)
+        return self.chain.invoke({"review": review_text, "score": display_score})
