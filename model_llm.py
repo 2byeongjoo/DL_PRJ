@@ -6,7 +6,7 @@ from langchain_core.output_parsers import StrOutputParser # 추가
 class ReviewLLM:
     def __init__(self):
         # 1. Ollama 모델 설정
-        self.llm = Ollama(model="llama3") 
+        self.llm = Ollama(model="llama3") # Ollama 모델로 llama3 모델 선정
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
         self.template = """
@@ -20,11 +20,17 @@ class ReviewLLM:
         1. 이 점수가 나온 이유를 리뷰 내용에서 찾아 분석하세요.
         2. 전문 용어를 섞어 설득력 있게 비평하세요.
         3. 마지막에는 소비자나 제작자에게 주는 한 줄 조언을 포함하세요.
+        4. (매우 중요!!!) 반드시!!! `한국어`로 답하세요
         
-        비평 결과:
+        비평 결과(한국어로 작성):
         """
-        self.prompt = PromptTemplate(template=self.template, input_variables=["review", "score"])
-        
+        self.prompt = PromptTemplate(template=self.template, input_variables=["review", "score"]) # input_variables=["review", "score"]
+        '''
+        self.template 부분
+        설명: LLM에게 "넌 비평가야"라는 **역할(Persona)**을 주고, 
+        LSTM에서 나온 숫자를 해석하는 논리적 가이드라인을 준 것입니다. 
+        이게 없으면 LLM은 그냥 평범한 대답만 내놓게 됩니다.
+        '''
         # 3. 최신 방식(Chain) 구성: | 기호를 사용해 연결합니다.
         self.chain = self.prompt | self.llm | StrOutputParser()
 
