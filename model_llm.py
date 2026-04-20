@@ -6,8 +6,10 @@ from langchain_core.output_parsers import StrOutputParser # 추가
 class ReviewLLM:
     def __init__(self):
         # 1. Ollama 모델 설정
-        self.llm = Ollama(base_url = "https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev",
-            model="llama3:latest") # Ollama 모델로 llama3 모델 선정
+        self.llm = Ollama(
+            base_url="https://d0c0fbab9197960a1a.gradio.live", # ◀ 방금 뜬 따끈따끈한 주소!
+            model="llama3:latest"
+        )
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
         self.template = """
