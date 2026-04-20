@@ -7,8 +7,8 @@ class ReviewLLM:
     def __init__(self):
         # 1. Ollama 모델 설정
         self.llm = Ollama(
-            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev/", # ◀ 방금 뜬 따끈따끈한 주소!
-            model="llama3:latest"
+            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev", # ◀ 방금 뜬 따끈따끈한 주소!
+            model="llama3"
         )
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
