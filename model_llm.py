@@ -1,14 +1,15 @@
 # model_llm.py
 from langchain_community.llms import Ollama
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser # 추가
+from langchain_core.output_parsers import StrOutputParser
 
 class ReviewLLM:
     def __init__(self):
-        # 1. Ollama 모델 설정
+        # 1. Ollama 모델 설정 (ngrok 직결 & 보안 경고창 강제 패스)
         self.llm = Ollama(
-            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev", # ◀ 방금 뜬 따끈따끈한 주소!
-            model="llama3"
+            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev", # 끝에 슬래시(/) 빼고 넣으세요
+            model="llama3:latest", # 병주님 PC에 깔린 정확한 이름 (혹시 안되면 llama3 로 변경)
+            headers={"ngrok-skip-browser-warning": "true"} # 🌟이게 404 에러를 막아주는 마법의 키입니다!🌟
         )
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
@@ -27,18 +28,11 @@ class ReviewLLM:
         
         비평 결과(한국어로 작성):
         """
-        self.prompt = PromptTemplate(template=self.template, input_variables=["review", "score"]) # input_variables=["review", "score"]
-        '''
-        self.template 부분
-        설명: LLM에게 "넌 비평가야"라는 **역할(Persona)**을 주고, 
-        LSTM에서 나온 숫자를 해석하는 논리적 가이드라인을 준 것입니다. 
-        이게 없으면 LLM은 그냥 평범한 대답만 내놓게 됩니다.
-        '''
-        # 3. 최신 방식(Chain) 구성: | 기호를 사용해 연결합니다.
+        self.prompt = PromptTemplate(template=self.template, input_variables=["review", "score"])
+        
+        # 3. 최신 방식(Chain) 구성
         self.chain = self.prompt | self.llm | StrOutputParser()
 
     def analyze_review(self, review_text, sentiment_score):
-        # 점수를 퍼센트로 변환해서 전달
         display_score = round(sentiment_score * 100, 2)
-        # run 대신 invoke를 사용합니다 (최신 규격)
         return self.chain.invoke({"review": review_text, "score": display_score})
