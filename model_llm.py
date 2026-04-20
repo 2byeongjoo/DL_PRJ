@@ -7,9 +7,9 @@ class ReviewLLM:
     def __init__(self):
         # 1. Ollama 모델 설정 (ngrok 직결 & 보안 경고창 강제 패스)
         self.llm = Ollama(
-            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev", # 끝에 슬래시(/) 빼고 넣으세요
+            base_url="https://intermetacarpal-concepcion-fondlingly.ngrok-free.dev", # 끝에 슬래시(/) 빼고 넣기
             model="llama3", # 병주님 PC에 깔린 정확한 이름 (혹시 안되면 llama3 로 변경)
-            headers={"ngrok-skip-browser-warning": "true"} # 🌟이게 404 에러를 막아주는 마법의 키입니다!🌟
+            headers={"ngrok-skip-browser-warning": "true"} # 이게 404 에러를 막아주는 키
         )
         
         # 2. 비평을 위한 프롬프트 템플릿 설계
